@@ -1,0 +1,30 @@
+# Disposable working checkouts used to vendor OpenTK 3.x (see OpenTK3/PROVENANCE.md)
+opentk3-upstream/
+opentk-3.3.3-src/
+
+# Build output of the vendored OpenTK
+OpenTK3/bin/
+OpenTK3/obj/
+
+# Source files left over from an earlier vendoring attempt against the 2017
+# leezer3/OpenTK master. OpenTK 3.3.3 renamed/removed these; they are not part
+# of any build (the compile lists in OpenTK3.Desktop/Android.csproj are
+# generated from the 3.3.3 project files) and are kept out of the repository.
+OpenTK3/Input/IInputDriver.cs
+OpenTK3/Input/IJoystickDriver.cs
+OpenTK3/Input/IKeyboardDriver.cs
+OpenTK3/Input/IMouseDriver.cs
+OpenTK3/Input/JoystickAxis.cs
+OpenTK3/Math/Functions.cs
+OpenTK3/Platform/Egl/EglException.cs
+OpenTK3/Platform/INativeGLWindow.cs
+OpenTK3/Platform/LegacyInputDriver.cs
+OpenTK3/Platform/LegacyJoystickDriver.cs
+OpenTK3/Platform/MacOS/Carbon/CarbonAPI.cs
+OpenTK3/Properties/AssemblyInfo.cs
+
+# Scratch diff lists
+.list-old.txt
+.list-new.txt
+.list-old-all.txt
+.list-new-all.txt
