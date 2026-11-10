@@ -9,8 +9,9 @@ unchanged: see [Building.md](Building.md) for the original instructions.
 |---|---|
 | Portable simulation core (`source/Mobile/*`, net8.0) | **Compiles and runs** - route + train loading and physics verified by the headless smoke test |
 | Headless smoke test (`source/Mobile/OpenBve.Headless`) | **Passing** on .NET 8 (Windows; no UI, GDI or GL required) |
+| OpenTK 3.3.3 for Android (`externals/OpenTK3`) | **Vendored + build projects ready** - desktop net8.0 build verified; the net8.0-android build requires the Android workload (not run here) |
 | Android app skeleton (`source/OpenBVE.Android`) | Skeleton - boots the core with touch controls; **not yet buildable** without the Android workload, and rendering/audio are TODO |
-| OpenGL renderer on Android | TODO |
+| OpenGL renderer on Android | TODO (LibRender2 GL call sites must move to the ES bindings) |
 | Audio backend on Android | TODO |
 | Menus / package UI on Android | TODO |
 
@@ -28,6 +29,12 @@ unchanged: see [Building.md](Building.md) for the original instructions.
   * `OpenBve.Headless/` - console smoke test which loads a bundled test route
     and train and runs the physics for 20 simulated seconds.
 * `source/OpenBVE.Android/` - the Android application skeleton.
+* `externals/OpenTK3/` - **OpenTK 3.3.3 vendored from source** (the same API
+  version as the desktop `OpenTK-OpenBVE` package), with two build projects:
+  * `OpenTK3.Desktop.csproj` (net8.0) - used by the mobile core;
+  * `OpenTK3.Android.csproj` (net8.0-android) - the Android build, containing
+    `AndroidGameView`, the EGL platform layer and the OpenGL ES bindings.
+  See `externals/OpenTK3/PROVENANCE.md` for provenance and local changes.
 
 ### Source code conventions for shared files
 
@@ -42,9 +49,11 @@ project files):
 * `System.Drawing.Common` is referenced for GDI bitmap handling. It compiles
   for net8.0 but throws at runtime on Android; the texture/font/route-map code
   must move to ImageSharp or SkiaSharp.
-* `CS-Script.lib` (train scripts) and `OpenTK-OpenBVE` are consumed through
-  NuGet compatibility shims (net45/net20 assemblies). Script execution and the
-  GL binding story on Android are open items (see Roadmap).
+* `CS-Script.lib` (train scripts) is consumed through a NuGet compatibility
+  shim (net45 assembly). Script execution on Android is an open item (see
+  Roadmap).
+* OpenTK is built from the vendored 3.3.3 sources (`externals/OpenTK3`)
+  instead of the `OpenTK-OpenBVE` package.
 
 ## Building and running the headless smoke test
 
@@ -87,11 +96,13 @@ first start.
 
 ## Roadmap (roughly in order)
 
-1. **Rendering**: host `LibRender2` in an OpenGL ES context. OpenBVE uses
-   OpenTK's OpenGL 1.x/2.x fixed-function API; on Android this needs either an
-   OpenTK build with Android support or a GLES translation layer
-   (e.g. gl4es-style) since GLES drops immediate mode. This is the largest
-   remaining piece of work.
+1. **Rendering**: host `LibRender2` in an OpenGL ES context via the vendored
+   OpenTK 3.x Android build (`externals/OpenTK3/OpenTK3.Android.csproj`, with
+   `AndroidGameView` + the ES bindings). The remaining work is on the LibRender2
+   side: move GL call sites to the ES 2.0/3.0 surface (`ProgramUniform*` to
+   `Uniform*`, `AlphaFunc` to a discard shader, immediate-mode overlay drawing
+   to vertex arrays), and multi-target the core projects for
+   `net8.0-android` so they compile against `OpenTK3.Android`.
 2. **Audio**: replace the OpenAL backend in `SoundManager` with an Android
    backend (AAudio via OpenSL ES or `SoundPool`/`AudioTrack`).
 3. **Touch UI**: on-screen controls (reverser, power/brake, horn, doors,

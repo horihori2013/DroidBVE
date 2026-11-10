@@ -12,10 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\OpenBveApi.Mobile\OpenBveApi.Mobile.csproj" />
     <ProjectReference Include="..\Mobile.Compat\Mobile.Compat.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="OpenTK-OpenBVE" Version="1.0.7" />
+    <!-- OpenTK 3.x built from the vendored sources (see ../../externals/OpenTK3/PROVENANCE.md) -->
+    <ProjectReference Include="..\..\..\externals\OpenTK3\OpenTK3.Desktop.csproj" />
   </ItemGroup>
 
 </Project>

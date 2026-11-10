@@ -12,10 +12,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OpenBveApi.Mobile\OpenBveApi.Mobile.csproj" />
+    <!-- OpenTK 3.x built from the vendored sources (see ../../externals/OpenTK3/PROVENANCE.md).
+         For the Android TFM this is swapped for OpenTK3.Android. -->
+    <ProjectReference Include="..\..\..\externals\OpenTK3\OpenTK3.Desktop.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK-OpenBVE" Version="1.0.7" />
     <!-- TEMPORARY: GDI+ based font/texture handling. To be replaced for Android. -->
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
   </ItemGroup>
