@@ -9,9 +9,9 @@ unchanged: see [Building.md](Building.md) for the original instructions.
 |---|---|
 | Portable simulation core (`source/Mobile/*`, net8.0) | **Compiles and runs** - route + train loading and physics verified by the headless smoke test |
 | Headless smoke test (`source/Mobile/OpenBve.Headless`) | **Passing** on .NET 8 (Windows; no UI, GDI or GL required) |
-| OpenTK 3.3.3 for Android (`externals/OpenTK3`) | **Vendored + build projects ready** - desktop net8.0 build verified; the net8.0-android build requires the Android workload (not run here) |
-| Android app skeleton (`source/OpenBVE.Android`) | Skeleton - boots the core with touch controls; **not yet buildable** without the Android workload, and rendering/audio are TODO |
-| OpenGL renderer on Android | TODO (LibRender2 GL call sites must move to the ES bindings) |
+| OpenTK 3.3.3 for Android (`externals/OpenTK3`) | **Vendored with `net8.0` + `net8.0-android` build projects** - `OpenTK3.Mobile` (ES 3.0 surface + desktop-GL compat shim) verified building; bindings are IL-rewritten after each build (see `externals/OpenTK3/PROVENANCE.md`) |
+| GLES rendering path | **LibRender2 compiles unchanged against the GLES compat shim** and the headless smoke passes on it; on-device rendering still needs GLSL ES runtime fixes + `AndroidGameView` wiring |
+| Android app skeleton (`source/OpenBVE.Android`) | Skeleton - boots the core with touch controls; **not yet buildable** without the Android workload, and rendering hookup is TODO |
 | Audio backend on Android | TODO |
 | Menus / package UI on Android | TODO |
 
@@ -96,13 +96,13 @@ first start.
 
 ## Roadmap (roughly in order)
 
-1. **Rendering**: host `LibRender2` in an OpenGL ES context via the vendored
-   OpenTK 3.x Android build (`externals/OpenTK3/OpenTK3.Android.csproj`, with
-   `AndroidGameView` + the ES bindings). The remaining work is on the LibRender2
-   side: move GL call sites to the ES 2.0/3.0 surface (`ProgramUniform*` to
-   `Uniform*`, `AlphaFunc` to a discard shader, immediate-mode overlay drawing
-   to vertex arrays), and multi-target the core projects for
-   `net8.0-android` so they compile against `OpenTK3.Android`.
+1. **Rendering**: `LibRender2` now compiles against the OpenGL ES 3.0 surface
+   through the compat shim (`externals/OpenTK3/GLESCompat`) - the desktop GL
+   call sites did not need porting. Remaining work: host `BaseRenderer` in an
+   `AndroidGameView` context in `source/OpenBVE.Android`, adapt the LibRender2
+   GLSL sources for GLSL ES at runtime (precision/version handling is already
+   done in the shim's `ShaderSource`; device testing will surface any
+   remaining syntax differences), and verify on hardware.
 2. **Audio**: replace the OpenAL backend in `SoundManager` with an Android
    backend (AAudio via OpenSL ES or `SoundPool`/`AudioTrack`).
 3. **Touch UI**: on-screen controls (reverser, power/brake, horn, doors,

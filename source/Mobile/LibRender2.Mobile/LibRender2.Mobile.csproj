@@ -13,8 +13,9 @@
   <ItemGroup>
     <ProjectReference Include="..\OpenBveApi.Mobile\OpenBveApi.Mobile.csproj" />
     <!-- OpenTK 3.x built from the vendored sources (see ../../externals/OpenTK3/PROVENANCE.md).
-         For the Android TFM this is swapped for OpenTK3.Android. -->
-    <ProjectReference Include="..\..\..\externals\OpenTK3\OpenTK3.Desktop.csproj" />
+         OpenTK3.Mobile exposes the GLES 3.0 surface + the desktop-GL compat shim
+         (GLESCompat) - the exact API the Android build uses. -->
+    <ProjectReference Include="..\..\..\externals\OpenTK3\OpenTK3.Mobile.csproj" />
   </ItemGroup>
 
   <ItemGroup>
