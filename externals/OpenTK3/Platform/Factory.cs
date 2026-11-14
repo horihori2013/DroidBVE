@@ -127,7 +127,7 @@ namespace OpenTK.Platform
                     Embedded = new UnsupportedPlatform();
                 }
 
-#if ANDROID
+#if ANDROID || __MOBILE__
                 Angle = new UnsupportedPlatform();
 #else
                 Angle = new Egl.EglAnglePlatformFactory(Embedded);
@@ -214,7 +214,11 @@ namespace OpenTK.Platform
 
             public override IDisplayDeviceDriver CreateDisplayDeviceDriver()
             {
+                #if __MOBILE__
+                return new Dummy.DummyDisplayDeviceDriver();
+                #else
                 throw new PlatformNotSupportedException(error_string);
+                #endif
             }
 
             public override IGraphicsContext CreateGLContext(GraphicsMode mode, IWindowInfo window, IGraphicsContext shareContext, bool directRendering, int major, int minor, GraphicsContextFlags flags)

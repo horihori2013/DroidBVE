@@ -28,3 +28,5 @@ OpenTK3/Properties/AssemblyInfo.cs
 .list-new.txt
 .list-old-all.txt
 .list-new-all.txt
+OpenTK3/Generator.Rewrite/bin/
+OpenTK3/Generator.Rewrite/obj/

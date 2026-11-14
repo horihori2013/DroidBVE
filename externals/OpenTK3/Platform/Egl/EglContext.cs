@@ -154,7 +154,7 @@ namespace OpenTK.Platform.Egl
                 {
                     WindowInfo = (EglWindowInfo)window;
                 }
-#if !ANDROID
+#if !ANDROID && !__MOBILE__
                 else if (window is IAngleWindowInfoInternal)
                 {
                     WindowInfo = ((IAngleWindowInfoInternal)window).EglWindowInfo;

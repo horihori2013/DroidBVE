@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    OpenTK binding rewriter (Generator.Rewrite), rebuilt for net8.0.
+    The generated GL/ES binding methods throw BindingsNotRewrittenException
+    until this tool rewrites their IL bodies into real interop calls; it must
+    run after building any OpenTK3.* assembly (see the AfterBuild targets).
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Rewrite</AssemblyName>
+    <RootNamespace>Bind</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS0618;CS0162;CS0219;SYSLIB0011</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="**\*.cs" Exclude="bin\**;obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.5" />
+  </ItemGroup>
+</Project>

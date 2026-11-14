@@ -3,12 +3,15 @@
   Sources are vendored from https://github.com/opentk/opentk tag 3.3.3 (see
   PROVENANCE.md); the file list and defines mirror the original
   src/OpenTK/OpenTK.Android.csproj (Xamarin.Android), modernized to the .NET
-  Android SDK.
+  Android SDK, plus the GLESCompat shim (desktop OpenGL API over the ES 3.0
+  bindings) which LibRender2 targets.
 
   Contains AndroidGameView, the EGL platform layer and the OpenGL ES 1.0/1.1/
   2.0/3.0/3.1 bindings (OpenTK.Graphics.ES10/ES11/ES20/ES30/ES31).
 
   Requires: dotnet workload install android
+  The generated binding stubs are rewritten into real interop calls after the
+  build by the vendored Generator.Rewrite tool (see OpenTK3.Mobile.csproj).
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
@@ -23,11 +26,19 @@
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <NoWarn>$(NoWarn);CS0618;CS1591;CS3021;CS0067;CS0414;CS0169;CS0649</NoWarn>
-    <DefineConstants>$(DefineConstants);ANDROID;OPENGLES;OPENTK_1_1</DefineConstants>
+    <DefineConstants>$(DefineConstants);ANDROID;OPENGLES;OPENTK_1_1;__MOBILE__</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="GLESCompat\GLEnumsCompat.cs" />
+    <Compile Include="GLESCompat\GLCompat.cs" />
+    <Compile Include="Platform\Dummy\DummyDisplayDeviceDriver.cs" />
     <Compile Include="Audio\AudioCapture.cs" />
     <Compile Include="Audio\AudioContext.cs" />
     <Compile Include="Audio\AudioContextException.cs" />
@@ -211,5 +222,9 @@
     <Compile Include="WindowIcon.cs" />
     <Compile Include="WindowState.cs" />
   </ItemGroup>
+
+  <Target Name="RewriteBindings" AfterTargets="Build" Condition="'$(SkipBindingRewrite)' != 'true'">
+    <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)Generator.Rewrite\Generator.Rewrite.NetCore.csproj&quot; --configuration $(Configuration) -- --assembly &quot;$(TargetPath)&quot;" />
+  </Target>
 
 </Project>
