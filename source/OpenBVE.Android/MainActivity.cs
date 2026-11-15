@@ -31,6 +31,7 @@ namespace DroidBVE
 		private AndroidOptions options;
 		private FileSystem fileSystem;
 		private TrainBase playerTrain;
+		private AndroidSounds sounds;
 
 		private TextView statusText;
 		private TextView speedText;
@@ -81,6 +82,7 @@ namespace DroidBVE
 			try
 			{
 				Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+				AndroidAudioBootstrap.Initialize();
 
 				// Android asset packs are not real files: unpack what the
 				// parsers need (data folder + test content) to app storage.
@@ -106,6 +108,7 @@ namespace DroidBVE
 
 				AndroidRenderer renderer = new AndroidRenderer(host, options, fileSystem);
 				AndroidTrainManager trainManager = new AndroidTrainManager(host, renderer, options, fileSystem);
+				sounds = new AndroidSounds(host);
 				CurrentRoute currentRoute = new CurrentRoute(host, renderer);
 				host.CurrentRoute = currentRoute;
 
@@ -181,13 +184,14 @@ namespace DroidBVE
 		private void SimTick(object state)
 		{
 			TrainBase train = playerTrain;
-			if (train == null)
+			if (train == null || sounds == null)
 			{
 				return;
 			}
 			lock (simLock)
 			{
 				train.Update(0.1);
+				sounds.Update(0.1);
 			}
 			double kmh = train.CurrentSpeed * 3.6;
 			double position = train.Cars[0].FrontAxle.Follower.TrackPosition;

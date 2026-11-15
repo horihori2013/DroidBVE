@@ -27,7 +27,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="*.cs" />
+    <Compile Include="**\*.cs" Exclude="bin\**;obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- OpenAL Soft (see native/build-openal-soft.sh) -->
+    <AndroidNativeLibrary Include="native\jniLibs\**\*.so" />
   </ItemGroup>
 
   <ItemGroup>

@@ -12,7 +12,7 @@ unchanged: see [Building.md](Building.md) for the original instructions.
 | OpenTK 3.3.3 for Android (`externals/OpenTK3`) | **Vendored with `net8.0` + `net8.0-android` build projects** - `OpenTK3.Mobile` (ES 3.0 surface + desktop-GL compat shim) verified building; bindings are IL-rewritten after each build (see `externals/OpenTK3/PROVENANCE.md`) |
 | GLES rendering path | **LibRender2 compiles unchanged against the GLES compat shim** and the headless smoke passes on it; on-device rendering still needs GLSL ES runtime fixes + `AndroidGameView` wiring |
 | Android app skeleton (`source/OpenBVE.Android`) | Skeleton - boots the core with touch controls; **not yet buildable** without the Android workload, and rendering hookup is TODO |
-| Audio backend on Android | TODO |
+| Audio backend on Android | 🚧 **OpenAL Soft** path defined: `SoundManager` already compiles unchanged (same OpenAL API as desktop); `AndroidAudioBootstrap` remaps the `openal32.dll` import and `native/build-openal-soft.sh` cross-compiles OpenAL Soft into `jniLibs/` |
 | Menus / package UI on Android | TODO |
 
 ## Repository layout
@@ -103,8 +103,13 @@ first start.
    GLSL sources for GLSL ES at runtime (precision/version handling is already
    done in the shim's `ShaderSource`; device testing will surface any
    remaining syntax differences), and verify on hardware.
-2. **Audio**: replace the OpenAL backend in `SoundManager` with an Android
-   backend (AAudio via OpenSL ES or `SoundPool`/`AudioTrack`).
+2. **Audio**: use **OpenAL Soft** as the Android OpenAL implementation - the
+   simulation core keeps its existing OpenAL API and needs no changes.
+   Build the native library with `source/OpenBVE.Android/native/build-openal-soft.sh`
+   (requires the Android NDK); the app remaps the `openal32.dll` import to
+   `libopenal32.so` in `AndroidAudioBootstrap`. Known gap: `AudioCapture`
+   (microphone) is not available through OpenAL Soft on Android - the mic
+   feature should be disabled on mobile.
 3. **Touch UI**: on-screen controls (reverser, power/brake, horn, doors,
    ATS/ATC), station announcements, and a route/train picker replacing the
    WinForms menus.
