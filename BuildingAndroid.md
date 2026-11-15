@@ -11,7 +11,7 @@ unchanged: see [Building.md](Building.md) for the original instructions.
 | Headless smoke test (`source/Mobile/OpenBve.Headless`) | **Passing** on .NET 8 (Windows; no UI, GDI or GL required) |
 | OpenTK 3.3.3 for Android (`externals/OpenTK3`) | **Vendored with `net8.0` + `net8.0-android` build projects** - `OpenTK3.Mobile` (ES 3.0 surface + desktop-GL compat shim) verified building; bindings are IL-rewritten after each build (see `externals/OpenTK3/PROVENANCE.md`) |
 | GLES rendering path | **LibRender2 compiles unchanged against the GLES compat shim** and the headless smoke passes on it; on-device rendering still needs GLSL ES runtime fixes + `AndroidGameView` wiring |
-| Android app skeleton (`source/OpenBVE.Android`) | Skeleton - boots the core with touch controls; **not yet buildable** without the Android workload, and rendering hookup is TODO |
+| Android app skeleton (`source/OpenBVE.Android`) | 🚧 **Rendering hooked up**: `SimGameView` (AndroidGameView) hosts `AndroidRenderer` (LibRender2 over the GLES shim) and drives the sim per frame with touch controls overlaid; needs `dotnet workload install android` + on-device testing |
 | Audio backend on Android | 🚧 **OpenAL Soft** path defined: `SoundManager` already compiles unchanged (same OpenAL API as desktop); `AndroidAudioBootstrap` remaps the `openal32.dll` import and `native/build-openal-soft.sh` cross-compiles OpenAL Soft into `jniLibs/` |
 | Menus / package UI on Android | TODO |
 
@@ -96,13 +96,14 @@ first start.
 
 ## Roadmap (roughly in order)
 
-1. **Rendering**: `LibRender2` now compiles against the OpenGL ES 3.0 surface
-   through the compat shim (`externals/OpenTK3/GLESCompat`) - the desktop GL
-   call sites did not need porting. Remaining work: host `BaseRenderer` in an
-   `AndroidGameView` context in `source/OpenBVE.Android`, adapt the LibRender2
-   GLSL sources for GLSL ES at runtime (precision/version handling is already
-   done in the shim's `ShaderSource`; device testing will surface any
-   remaining syntax differences), and verify on hardware.
+1. **Rendering**: the hook-up is done - `SimGameView` (OpenTK's
+   `AndroidGameView`) creates the GLES context, `AndroidRenderer` renders the
+   world through LibRender2 (opaque + alpha + overlay faces) and the sim ticks
+   per frame like the desktop architecture. Content plugins
+   (`Object.CsvB3d`, `Texture.BmpGifJpegPngTiff`) are registered statically.
+   Remaining: on-device GLSL ES fixes, sky/background renderer, cascaded
+   shadows, camera touch controls, and the cab/overlay text path (fonts are
+   currently disabled on mobile - `Fonts.cs` has a `#if MOBILE` guard).
 2. **Audio**: use **OpenAL Soft** as the Android OpenAL implementation - the
    simulation core keeps its existing OpenAL API and needs no changes.
    Build the native library with `source/OpenBVE.Android/native/build-openal-soft.sh`

@@ -78,6 +78,12 @@ namespace LibRender2.Text
 		public Fonts(HostInterface host, BaseRenderer renderer, string fontName)
 		{
 			currentHost = host;
+#if MOBILE
+			// TODO: System.Drawing is unavailable on mobile platforms - text
+			// rendering needs a mobile replacement (see BuildingAndroid.md).
+			// The font fields stay null until then; overlay text is disabled.
+			return;
+#else
 			FontFamily uiFont = FontFamily.GenericSansSerif;
 			if (!string.IsNullOrEmpty(fontName))
 			{
@@ -100,6 +106,7 @@ namespace LibRender2.Text
 			LargeFont = new OpenGlFont(uiFont, 21.0f * scaleFactor);
 			VeryLargeFont = new OpenGlFont(uiFont, 27.0f * scaleFactor);
 			EvenLargerFont = new OpenGlFont(uiFont, 34.0f * scaleFactor);
+#endif
 		}
 	}
 }

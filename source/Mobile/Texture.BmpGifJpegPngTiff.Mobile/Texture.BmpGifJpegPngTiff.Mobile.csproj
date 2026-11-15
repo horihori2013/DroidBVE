@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Texture.BmpGifJpegPngTiff</AssemblyName>
+    <RootNamespace>Texture.BmpGifJpegPngTiff</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);NU1701;CS0618;CS1591;CS3021</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\Plugins\Texture.BmpGifJpegPngTiff\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenBveApi.Mobile\OpenBveApi.Mobile.csproj" />
+  </ItemGroup>
+
+</Project>

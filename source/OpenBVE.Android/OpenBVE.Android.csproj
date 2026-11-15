@@ -44,6 +44,8 @@
     <ProjectReference Include="..\Mobile\TrainManager.Mobile\TrainManager.Mobile.csproj" />
     <ProjectReference Include="..\Mobile\Route.CsvRw.Mobile\Route.CsvRw.Mobile.csproj" />
     <ProjectReference Include="..\Mobile\Train.OpenBve.Mobile\Train.OpenBve.Mobile.csproj" />
+    <ProjectReference Include="..\Mobile\Object.CsvB3d.Mobile\Object.CsvB3d.Mobile.csproj" />
+    <ProjectReference Include="..\Mobile\Texture.BmpGifJpegPngTiff.Mobile\Texture.BmpGifJpegPngTiff.Mobile.csproj" />
   </ItemGroup>
 
   <ItemGroup>

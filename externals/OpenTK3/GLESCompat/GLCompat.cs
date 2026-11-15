@@ -254,15 +254,31 @@ namespace OpenTK.Graphics.OpenGL
 		}
 
 		/// <summary>
-		/// Converts desktop GLSL (1.20 style) into GLSL ES 1.00, which accepts the
-		/// same attribute/varying syntax but requires precision qualifiers.
+		/// Converts desktop GLSL (core 1.50/4.10 and legacy 1.20 style) into GLSL ES.
+		/// Core-style shaders map to GLSL ES 3.00 (same in/out/texture() model);
+		/// legacy shaders map to GLSL ES 1.00 (attribute/varying). Precision
+		/// qualifiers are injected as ES requires them.
 		/// </summary>
 		private static string PreprocessShaderSource(int shader, string source)
 		{
-			source = source.Replace("#version 120", string.Empty).Replace("#version 130", string.Empty).Replace("#version 140", string.Empty).Replace("#version 150", string.Empty);
 			bool fragment = GetShaderType(shader) == ShaderType.FragmentShader;
-			string precision = fragment ? "precision mediump float;\nprecision mediump int;\n" : "precision highp float;\nprecision highp int;\n";
-			return precision + source;
+			System.Text.RegularExpressions.Match versionMatch = System.Text.RegularExpressions.Regex.Match(source, @"#version\s+(\d+)");
+			int version = versionMatch.Success ? int.Parse(versionMatch.Groups[1].Value) : 110;
+			if (version >= 300)
+			{
+				// Core GLSL -> GLSL ES 3.00
+				source = source.Replace(versionMatch.Value, "#version 300 es");
+				string precision = fragment
+					? "precision highp float;\nprecision highp int;\nprecision highp sampler2DShadow;\n"
+					: "precision highp float;\nprecision highp int;\n";
+				int insertAt = source.IndexOf("#version 300 es", StringComparison.Ordinal) + "#version 300 es".Length;
+				return source.Substring(0, insertAt) + "\n" + precision + source.Substring(insertAt);
+			}
+
+			// Legacy GLSL -> GLSL ES 1.00
+			source = source.Replace(versionMatch.Value, string.Empty);
+			string legacyPrecision = fragment ? "precision mediump float;\nprecision mediump int;\n" : "precision highp float;\nprecision highp int;\n";
+			return legacyPrecision + source;
 		}
 
 		private static readonly Dictionary<int, ShaderType> shaderTypes = new Dictionary<int, ShaderType>();

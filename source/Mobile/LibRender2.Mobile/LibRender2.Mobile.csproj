@@ -11,6 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Shader sources are embedded resources (see AbstractShader) -->
+    <EmbeddedResource Include="..\..\..\assets\Shaders\*.vert;..\..\..\assets\Shaders\*.frag" LogicalName="LibRender2.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OpenBveApi.Mobile\OpenBveApi.Mobile.csproj" />
     <!-- OpenTK 3.x built from the vendored sources (see ../../externals/OpenTK3/PROVENANCE.md).
          OpenTK3.Mobile exposes the GLES 3.0 surface + the desktop-GL compat shim
